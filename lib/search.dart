@@ -1,0 +1,79 @@
+import 'content.dart';
+import 'package:flutter/material.dart';
+import 'people.dart';
+
+class SearchPeople extends SearchDelegate<String> {
+  final List<Person> people;
+
+  SearchPeople(this.people);
+
+//placeholder text
+  @override
+  String get searchFieldLabel => 'Search People';
+
+//User input text color
+  @override
+  TextStyle get searchFieldStyle => TextStyle(color: Colors.white);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+      appBarTheme:
+          const AppBarTheme(backgroundColor: Color.fromARGB(255, 226, 137, 3)),
+      primaryColor:
+          const Color.fromARGB(255, 226, 137, 3), // Change the app bar color
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black),
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = people
+        .where((person) => person.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    if (results.isEmpty) {
+      return Center(
+        child: Text('No results found for "$query" '),
+      );
+    }
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        return ContentPage(results[index]);
+      },
+    );
+  }
+
+//text in the middle before search
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return const Center(
+      child: Text('Type the persons name to search'),
+    );
+  }
+
+// Return to the previous screen
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, "");
+      },
+    );
+  }
+}
