@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'people.dart';
+import 'content.dart';
 
 class AddPeoplePage extends StatelessWidget {
   const AddPeoplePage({Key? key}) : super(key: key);
@@ -53,17 +54,16 @@ class AddPeopleBodyState extends State<AddPeopleBody> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: LayoutBuilder(
-        builder: (context, constraints) {
-          return FractionallySizedBox(
-            widthFactor: 0.28,
-            heightFactor: 0.08,
-            child: FloatingActionButton.extended(
-              onPressed: () { // Create an object list to pass through Person class in people.dart
-                final newPerson = Person(
+      floatingActionButton: customfloatingButton(
+          label: 'Save',
+          iconData: Icons.save,
+          onPressed: () {
+            final newPerson = Person(
                   id: idInput.text,
                   name: nameInput.text,
                   phone: phoneInput.text,
@@ -71,14 +71,7 @@ class AddPeopleBodyState extends State<AddPeopleBody> {
                 
                 peopleProvider.addPerson(newPerson);
                 Navigator.pop(context);
-              },
-              label: Text('Save', style: TextStyle(fontSize: 16.0)),
-              icon: Transform.scale(scale: 1.25, child: Icon(Icons.save)),
-              backgroundColor: const Color(0xff764abc),
-              foregroundColor: Colors.white,
-            ),
-          );
-        },
+            }
       ),
       body: SingleChildScrollView(
         child: Padding(

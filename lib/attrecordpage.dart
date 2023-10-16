@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'people.dart';
+import 'content.dart';
+import 'records.dart';
 
 class AttHead extends StatefulWidget {
   AttHead({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class AttHead extends StatefulWidget {
 
 class _AttHeadState extends State<AttHead> {
   // A variable to hold the loaded people
-  List<Person> loadedPeople = [];
+  List<Records> loadedRecords = [];
 
   void updateState() {
   setState(() {});
@@ -21,11 +22,11 @@ class _AttHeadState extends State<AttHead> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Access the PeopleProvider to retrieve the list of people
-    final peopleProvider = Provider.of<PeopleProvider>(context);
+    // Access the recordProvider to retrieve the list of records
+    final recordProvider = Provider.of<RecordProvider>(context);
 
-    // Update the loadedPeople whenever the dependencies change
-    loadedPeople = peopleProvider.peopleList;
+    // Update the loadedRecords whenever the dependencies change
+    loadedRecords = recordProvider.recordList;
   }
 
   @override
@@ -33,115 +34,53 @@ class _AttHeadState extends State<AttHead> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Attendance Record Demo'),
+          title: Text('Attendance Records Demo'),
           backgroundColor: const Color.fromARGB(255, 255, 119, 0),
           centerTitle: true,
           actions: <Widget>[
             IconButton(
               icon: Transform.scale(scale: 1.22, child: Icon(Icons.search)),
               onPressed: () {
-                /* SEARCH FOR RECORD ID
+                /* SEARCH FOR Records ID
                 showSearch(
                   context: context,
-                  delegate: SearchPeople(loadedPeople),
+                  delegate: SearchPeople(loadedRecords),
                 );
                 */
               },
             )
           ],
         ),
-        floatingActionButton: LayoutBuilder(
-          builder: (context, constraints) {
-            return const FractionallySizedBox(
-              widthFactor: 0.3,
-              heightFactor: 0.09,
-              /*
-              child: FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(
-                    context,MaterialPageRoute
-                    (builder: (context) => AddPeoplePage())).then
-                    (
-                      (_) 
-                      {// This code runs after returning from addpplPage
-                        updateState(); // Refresh List
-                      }
-                    );
-                },
-                label: Text('Add', style: TextStyle(fontSize: 16.0)),
-                icon: Transform.scale(scale: 1.25, child: Icon(Icons.person_add_rounded)),
-                backgroundColor: const Color(0xff764abc),
-                foregroundColor: Colors.white,
-              ),
-              */
-            );
-          },
-        ),
+        //floating icon here
         body: ListView.builder(
-          itemCount: loadedPeople.length,
-          itemBuilder: (context, index) {
-            return ContentPage(loadedPeople[index]);
+          itemCount: loadedRecords.length,
+          itemBuilder: (context, index){
+            // Create a list of content widgets for each Records
+            List<Widget> contentWidgets = [
+              const CircleAvatar(
+                // backgroundImage: AssetImage('your_image_path'),
+                backgroundColor: const Color(0xff764abc),
+                radius: 30.0,
+                child: Icon(
+                  Icons.receipt,
+                ),
+              ),
+              Text('Date: ${loadedRecords[index].date}'),
+              Text('Present: ${loadedRecords[index].isPresent}'),
+              Text('Checked in: ${loadedRecords[index].checkinTime}'),
+              Text('ID Number: ${loadedRecords[index].id}'),
+              IconButton(
+                icon: Icon(Icons.arrow_forward_sharp),
+                onPressed: () {
+                  // Handle the button click
+                },
+              ),
+            ];
+            // Pass the contentWidgets to ContentPage
+            return ContentPage(contentWidgets);
           },
         ),
       ),
-    );
-  }
-}
-
-
-//List View
-class ContentPage extends StatelessWidget {
-  final Person person; // Accept a Person object as a parameter
-  const ContentPage(this.person, {super.key});
-
-
-  Widget _TextWithPadding(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 9.0),
-      child: Text(text, style: const TextStyle(height: 1.3),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double tileHeight = screenHeight * 0.12;
-
-    return Column(
-      children: [
-        SizedBox(
-          height: tileHeight,
-          child: ListTile(
-            leading: CircleAvatar(
-              radius: tileHeight * 0.27,
-              backgroundColor: const Color(0xff764abc),
-              child: Text( 
-                person.name, // Picture here
-                style: const TextStyle(height: 1.5),
-              ),
-            ),
-            title: _TextWithPadding('Name: ${person.name}'), // Name here
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _TextWithPadding('ID Number: ${person.id}'), // ID here
-                _TextWithPadding('Phone Number: ${person.phone}'), // Phone Number here
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.arrow_forward_sharp),
-              onPressed: () {
-                // See people attendance records
-              },
-            ),
-          ),
-        ),
-        const Divider(
-          height: 2, // Make it thicker
-          color: Colors.black, 
-        ),
-      ],
     );
   }
 }

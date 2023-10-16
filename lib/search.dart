@@ -1,17 +1,16 @@
 import 'content.dart';
 import 'package:flutter/material.dart';
 import 'people.dart';
+import 'records.dart';
 
-class SearchPeople extends SearchDelegate<String> {
-  final List<Person> people;
+class Searchbar extends SearchDelegate<String> {
+  final List items;
 
-  SearchPeople(this.people);
+  Searchbar(this.items);
 
-//placeholder text
   @override
-  String get searchFieldLabel => 'Search People';
+  String get searchFieldLabel => 'Search Here...';
 
-//User input text color
   @override
   TextStyle get searchFieldStyle => TextStyle(color: Colors.white);
 
@@ -20,7 +19,7 @@ class SearchPeople extends SearchDelegate<String> {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
       appBarTheme:
-          const AppBarTheme(backgroundColor:Color.fromARGB(255, 255, 119, 0)),
+          const AppBarTheme(backgroundColor: Color.fromARGB(255, 255, 119, 0)),
       primaryColor:
           const Color.fromARGB(255, 226, 137, 3), // Change the app bar color
       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black),
@@ -41,31 +40,63 @@ class SearchPeople extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final results = people
-        .where((person) => person.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    final results = items.where((item){
+        if (item is Person) {
+          final person = item as Person;
+          return person.name.toLowerCase().contains(query.toLowerCase());
+        }
+        else if(item is Records){
+          final record = item as Records;
+          return record.id.contains(query);
+        }
+        return false;
+  }).toList();
 
     if (results.isEmpty) {
       return Center(
         child: Text('No results found for "$query" '),
       );
     }
+
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
-            // Create a list of content widgets for each person
+        if (results[index] is Person) {
+          final person = results[index] as Person;
+          List<Widget> contentWidgets = [
+            const CircleAvatar(
+              backgroundColor: const Color(0xff764abc),
+              radius: 30.0,
+              child: Icon(Icons.person),
+            ),
+            Text('Name: ${person.name}'),
+            Text('ID Number: ${person.id}'),
+            Text('Phone Number: ${person.phone}'),
+            IconButton(
+              icon: Icon(Icons.arrow_forward_sharp),
+              onPressed: () {
+                // Handle the button click
+              },
+            ),
+          ];
+          return ContentPage(contentWidgets);
+        } else if (results[index] is Records) {
+          final record = results[index] as Records;
+          {
+            // Create a list of content widgets for each Records
             List<Widget> contentWidgets = [
               const CircleAvatar(
                 // backgroundImage: AssetImage('your_image_path'),
                 backgroundColor: const Color(0xff764abc),
                 radius: 30.0,
                 child: Icon(
-                  Icons.person,
+                  Icons.receipt,
                 ),
               ),
-              Text('Name: ${results[index].name}'),
-              Text('ID Number: ${results[index].id}'),
-              Text('Phone Number: ${results[index].phone}'),
+              Text('Date: ${record.date}'),
+              Text('Present: ${record.isPresent}'),
+              Text('Checked in: ${record.checkinTime}'),
+              Text('ID Number: ${record.id}'),
               IconButton(
                 icon: Icon(Icons.arrow_forward_sharp),
                 onPressed: () {
@@ -73,21 +104,25 @@ class SearchPeople extends SearchDelegate<String> {
                 },
               ),
             ];
-            // Pass the contentWidgets to ContentPage
             return ContentPage(contentWidgets);
-          },
+          }
+        }
+        else{
+          return const Center(
+            child: Text('Search scope not defined'),
+          );
+        }
+      },
     );
   }
 
-//text in the middle before search
   @override
   Widget buildSuggestions(BuildContext context) {
     return const Center(
-      child: Text('Type the persons name to search'),
+      child: Text('Type to search'),
     );
   }
 
-// Return to the previous screen
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(

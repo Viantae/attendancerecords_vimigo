@@ -46,35 +46,23 @@ class _MyAppState extends State<MyApp> {
               onPressed: () {
                 showSearch(
                   context: context,
-                  delegate: SearchPeople(loadedPeople),
+                  delegate: Searchbar(loadedPeople),
                 );
               },
             )
           ],
         ),
-        floatingActionButton: LayoutBuilder(
-          builder: (context, constraints) {
-            return FractionallySizedBox(
-              widthFactor: 0.3,
-              heightFactor: 0.09,
-              child: FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(
-                    context,MaterialPageRoute
-                    (builder: (context) => AddPeoplePage())).then
-                    (
-                      (_) 
-                      {// This code runs after returning from addpplPage
-                        updateState(); // Refresh List
-                      }
-                    );
-                },
-                label: Text('Add', style: TextStyle(fontSize: 16.0)),
-                icon: Transform.scale(scale: 1.25, child: Icon(Icons.person_add_rounded)),
-                backgroundColor: const Color(0xff764abc),
-                foregroundColor: Colors.white,
-              ),
-            );
+        floatingActionButton: customfloatingButton( 
+          label: 'Add',
+          iconData: Icons.person_add_rounded,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddPeoplePage()),
+            ).then((_) {
+              // This code runs after returning from AddPeoplePage
+              updateState(); // Refresh List
+            });
           },
         ),
         body: ListView.builder(

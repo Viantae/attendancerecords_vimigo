@@ -37,7 +37,10 @@ class ContentPage extends StatelessWidget {
             trailing: contentWidgets[contentWidgets.length - 1], // Last widget (e.g., a trailing widget)
           ),
         ),
-        const Divider(),
+        const Divider(
+          height: 2, // Make it thicker
+          color: Colors.black, 
+        ),
       ],
     );
   }
@@ -50,5 +53,35 @@ class ContentPage extends StatelessWidget {
   }
 }
 
+
+class customfloatingButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String label;
+  final IconData iconData;
+
+  customfloatingButton({
+    required this.label, 
+    required this.onPressed,
+    required this.iconData});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return FractionallySizedBox(
+          widthFactor: 0.3,
+          heightFactor: 0.09,
+          child: FloatingActionButton.extended(
+            onPressed: onPressed,
+            label: Text("$label: ", style: TextStyle(fontSize: 16.0)),
+            icon: Transform.scale(scale: 1.25, child: Icon(iconData)),
+            backgroundColor: const Color(0xff764abc),
+            foregroundColor: Colors.white,
+          ),
+        );
+      },
+    );
+  }
+}
 
 
