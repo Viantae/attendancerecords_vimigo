@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
-import 'people.dart';
 
 //List View
 class ContentPage extends StatelessWidget {
-  final Person person; // Accept a Person object as a parameter
-  const ContentPage(this.person, {super.key});
-
-
-  Widget _TextWithPadding(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 9.0),
-      child: Text(text, style: const TextStyle(height: 1.3),
-      ),
-    );
-  }
+  final List<Widget> contentWidgets;
+  const ContentPage(this.contentWidgets, {Key? key});
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double tileHeight = screenHeight * 0.12;
 
+    /*
+    Design include:
+      - Circular avatar on the left
+      - Text details on the next to avatar 
+      - Trailing icon on the most right
+    */
     return Column(
       children: [
         SizedBox(
@@ -28,33 +24,31 @@ class ContentPage extends StatelessWidget {
             leading: CircleAvatar(
               radius: tileHeight * 0.27,
               backgroundColor: const Color(0xff764abc),
-              child: Text( 
-                person.name, // Picture here
-                style: const TextStyle(height: 1.5),
-              ),
+              child: contentWidgets[0], // First widget (e.g., an image)
             ),
-            title: _TextWithPadding('Name: ${person.name}'), // Name here
+            title: _TextWithPadding(contentWidgets[1]), // Title widget (e.g., a name)
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _TextWithPadding('ID Number: ${person.id}'), // ID here
-                _TextWithPadding('Phone Number: ${person.phone}'), // Phone Number here
+              children: <Widget>[ //Other accompanying text
+                for (int i = 2; i < contentWidgets.length - 1; i++)
+                  _TextWithPadding(contentWidgets[i]),
               ],
             ),
-            trailing: IconButton(
-              icon: const Icon(Icons.arrow_forward_sharp),
-              onPressed: () {
-                // See people attendance records
-              },
-            ),
+            trailing: contentWidgets[contentWidgets.length - 1], // Last widget (e.g., a trailing widget)
           ),
         ),
-        const Divider(
-          height: 2, // Make it thicker
-          color: Colors.black, 
-        ),
+        const Divider(),
       ],
     );
   }
+
+  Widget _TextWithPadding(Widget widget) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 9.0),
+      child: widget,
+    );
+  }
 }
+
+
 

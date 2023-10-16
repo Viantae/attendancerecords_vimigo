@@ -53,8 +53,29 @@ class SearchPeople extends SearchDelegate<String> {
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
-        return ContentPage(results[index]);
-      },
+            // Create a list of content widgets for each person
+            List<Widget> contentWidgets = [
+              const CircleAvatar(
+                // backgroundImage: AssetImage('your_image_path'),
+                backgroundColor: const Color(0xff764abc),
+                radius: 30.0,
+                child: Icon(
+                  Icons.person,
+                ),
+              ),
+              Text('Name: ${results[index].name}'),
+              Text('ID Number: ${results[index].id}'),
+              Text('Phone Number: ${results[index].phone}'),
+              IconButton(
+                icon: Icon(Icons.arrow_forward_sharp),
+                onPressed: () {
+                  // Handle the button click
+                },
+              ),
+            ];
+            // Pass the contentWidgets to ContentPage
+            return ContentPage(contentWidgets);
+          },
     );
   }
 
