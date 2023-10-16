@@ -4,33 +4,30 @@ import 'dart:convert';
 
 //Person attributes
 class Person {
-  String id, name, phone, time;
-  Person
-  (
-      {
-        required this.id,
-        required this.name,
-        required this.phone,
-        required this.time}
-  );
+  String id, name, phone;
+
+  Person({
+    required this.id,
+    required this.name,
+    required this.phone,
+  });
+
+  // Add a factory constructor to create a Person from JSON
+  factory Person.fromJson(Map<String, dynamic> json) {
+    return Person(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      phone: json['phone'] as String,
+    );
+  }
+
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
       'phone': phone,
-      'time': time,
     };
-  }
-
-  // Create a Person object from a JSON map
-  factory Person.fromJson(Map<String, dynamic> json) {
-    return Person(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      phone: json['phone'] as String,
-      time: json['time'] as String,
-    );
   }
 }
 
@@ -53,7 +50,6 @@ class PeopleProvider extends ChangeNotifier {
 
 class PeopleRepository { //stores the list in memory and saves it
   static const _key = 'people_key';
-
   Future<void> savePeople(List<Person> people) async {
     final prefs = await SharedPreferences.getInstance();
     final peopleJson = people.map((person) => json.encode(person.toJson())).toList();

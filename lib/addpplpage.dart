@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import 'people.dart';
+
 
 class addpplPage extends StatelessWidget {
   const addpplPage({Key? key}) : super(key: key);
@@ -76,13 +77,12 @@ class __addpplBodyState extends State<_addpplBody> {
             heightFactor: 0.08,
             child: FloatingActionButton.extended(
               onPressed: () {
-                final newPerson = Person(
+                final newPerson = Person( // pass values into class in people.dart 
                   id: idInput.text,
                   name: nameInput.text,
                   phone: phoneInput.text,
-                  time: timeInput.text,
                 );
-                peopleProvider.addPerson(newPerson);
+                peopleProvider.addPerson(newPerson); // save values into the list
 
                 //Go back previous screen
                 Navigator.pop(context);
@@ -149,51 +149,6 @@ class __addpplBodyState extends State<_addpplBody> {
                 labelText: "Phone Number",
               ),
             ),
-            TextField // Input person check in time 
-            (
-              controller: timeInput,
-              decoration: InputDecoration
-              (
-                prefixIcon: const Icon(Icons.access_time),
-                labelText: "Check-in Time",
-                suffixIcon: IconButton
-                (
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                      clearTextField(timeInput);
-                  },
-                ),
-              ),
-              readOnly: true, //user will not able to edit text
-              onTap: () 
-              async
-              {
-                TimeOfDay? pickedTime = await showTimePicker
-                (
-                initialTime: TimeOfDay.now(),
-                context: context,
-                );
-
-                if (pickedTime != null) 
-                {
-                  String simplifiedTime = pickedTime.format(context);
-
-                  //output 1970-01-01 22:53:00.000
-                  //DateTime parsedTime = DateFormat.jm().parse(pickedTime.format(context).toString());
-
-                  //output 14:59:00
-                  // String formattedTime = DateFormat('HH:mm:ss').format(parsedTime);
-
-                setState(() {
-                timeInput.text = simplifiedTime; //set the value of text field.
-                });
-                } 
-                else 
-                {
-                  print("Time is not selected");
-                }
-              },
-            )
           ],
         )
       )

@@ -20,7 +20,7 @@ class SearchPeople extends SearchDelegate<String> {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
       appBarTheme:
-          const AppBarTheme(backgroundColor: Color.fromARGB(255, 226, 137, 3)),
+          const AppBarTheme(backgroundColor:Color.fromARGB(255, 255, 119, 0)),
       primaryColor:
           const Color.fromARGB(255, 226, 137, 3), // Change the app bar color
       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black),
