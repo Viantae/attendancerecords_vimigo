@@ -1,6 +1,8 @@
+import 'package:attendancerecords_vimigo/attendedpage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'attendedpage.dart';
 import 'content.dart';
 import 'addrecordpage.dart';
 import 'records.dart';
@@ -130,7 +132,10 @@ class _AttendancePageState extends State<AttendancePage> {
                     IconButton(
                       icon: Icon(Icons.arrow_forward_sharp),
                       onPressed: () {
-                        // Handle the button click
+                        Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RecordDetailsPage(recordDetails: loadedRecords[index])),
+                        );
                       },
                     ),
                   ];

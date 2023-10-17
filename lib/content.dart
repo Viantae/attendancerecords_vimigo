@@ -1,7 +1,7 @@
 import 'package:attendancerecords_vimigo/peoplepage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'attrecordpage.dart';
+import 'recordpage.dart';
 import 'people.dart';
 
 //List View
