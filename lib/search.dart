@@ -112,7 +112,6 @@ class Searchbar extends SearchDelegate<String> {
               ),
             ];
             return ContentPage(contentWidgets);
-            
           }
         }
         else{

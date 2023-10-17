@@ -57,6 +57,26 @@ class ARP_State extends State<ARP_Body> {
   // GlobalKey to refresh the page
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+  void showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -94,30 +114,54 @@ class ARP_State extends State<ARP_Body> {
   }
 
   void saveRecord() async {
-    //convert texteditingcontroller to List<String>
-    for (int i = 0; i < checkinTimeInput.length; i++) {
-      checkinTime.add(checkinTimeInput[i].text);
+    if (recordIDInput.text.isEmpty ||
+        datecreatedInput.text.isEmpty) {
+      // Show an error message or dialog to inform the user that some fields are empty
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Please fill in all required fields. (ID and Date)'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Convert text editing controller to List<String>
+      for (int i = 0; i < checkinTimeInput.length; i++) {
+        checkinTime.add(checkinTimeInput[i].text);
+      }
+
+      // Create a Records object with the data from input fields
+      final newRecord = Records(
+        id: recordIDInput.text,
+        personID: selectedPersonIDs,
+        checkinTime: checkinTime, // Join the checkin times into a single string
+        date: datecreatedInput.text,
+      );
+
+      // Add the new record to the provider
+      recordProvider.addRecords(newRecord);
+      
+
+      recordIDInput.clear();
+      datecreatedInput.clear();
+      for (final controller in checkinTimeInput) {
+        controller.clear();
+      }
+
+      // Return to the record page
+      Navigator.pop(context);
+      showSuccessDialog(context, "Added Sucessfully");
     }
-
-    // Create a Records object with the data from input fields
-    final newRecord = Records(
-      id: recordIDInput.text,
-      personID: selectedPersonIDs, 
-      checkinTime: checkinTime, // Join the checkin times into a single string
-      date: datecreatedInput.text,
-    );
-
-    // Add the new record to provider
-    recordProvider.addRecords(newRecord);
-
-    recordIDInput.clear();
-    datecreatedInput.clear();
-    for (final controller in checkinTimeInput) {
-      controller.clear();
-    }
-
-    // Return to record page
-    Navigator.pop(context);
   }
 
   @override

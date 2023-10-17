@@ -248,11 +248,7 @@ class _TimePickerState extends State<TimePicker> {
             setState(() {
               widget.controller.text = formattedDateTime;
             });
-          } else {
-            // print("Time is not selected");
           }
-        } else {
-          // print("Date is not selected");
         }
       }
     );

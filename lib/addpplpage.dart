@@ -42,6 +42,26 @@ class AddPeopleBodyState extends State<AddPeopleBody> {
   TextEditingController phoneInput = TextEditingController();
   File? _userImage;
 
+  void showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Allow user to pick an image from their gallery
   Future<void> _pickImage() async { 
     final imagePicker = ImagePicker();
@@ -56,20 +76,43 @@ class AddPeopleBodyState extends State<AddPeopleBody> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       floatingActionButton: customfloatingButton(
-          label: 'Save',
-          iconData: Icons.save,
-          onPressed: () {
+        label: 'Save',
+        iconData: Icons.save,
+        onPressed: () {
+          if (idInput.text.isEmpty ||
+              nameInput.text.isEmpty ||
+              phoneInput.text.isEmpty) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Error'),
+                    content: Text('Please fill in all fields.'),
+                    actions: [
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                });
+          } else {
+            // All fields are entered, proceed to save the data
             final newPerson = Person(
-                  id: idInput.text,
-                  name: nameInput.text,
-                  phone: phoneInput.text,
-                );
-                
-                peopleProvider.addPerson(newPerson);
-                Navigator.pop(context);
-            }
+              id: idInput.text,
+              name: nameInput.text,
+              phone: phoneInput.text,
+            );
+            peopleProvider.addPerson(newPerson);
+            Navigator.pop(context);
+            showSuccessDialog(context, "Added Sucessfully");
+          }
+      },
       ),
       body: SingleChildScrollView(
         child: Padding(

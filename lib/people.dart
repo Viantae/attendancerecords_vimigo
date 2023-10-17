@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -47,12 +48,15 @@ class PeopleProvider extends ChangeNotifier {
     _people.remove(person);
     savePeople();
     notifyListeners();
+    
   }
 
   void savePeople() {
     final peopleRepository = PeopleRepository();
     peopleRepository.savePeople(_people);
   }
+
+  
 }
 
 class PeopleRepository { //stores the list in memory and saves it

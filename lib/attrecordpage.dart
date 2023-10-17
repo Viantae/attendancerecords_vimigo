@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'addrecordpage.dart';
 import 'records.dart';
@@ -20,6 +21,12 @@ class _AttendancePageState extends State<AttendancePage> {
 
   bool timeFormat = true; // Add a flag to track the time format
 
+  @override
+  void initState() {
+    super.initState();
+    loadTimeFormat();
+  }
+
 
   void updateState() {
   setState(() {});
@@ -34,7 +41,23 @@ class _AttendancePageState extends State<AttendancePage> {
 
     // Update the loadedRecords whenever the dependencies change
     loadedRecords = recordProvider.recordList;
+
+    // Sort the loadedRecords list by date in descending order (most recent to oldest)
+    loadedRecords.sort((a, b) => DateTime.parse(b.date).compareTo(DateTime.parse(a.date)));
   }
+  
+  Future<void> loadTimeFormat() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      timeFormat = prefs.getBool('timeFormat') ?? true;
+    });
+  }
+
+  Future<void> saveTimeFormat(bool newTimeFormat) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('timeFormat', newTimeFormat);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +100,7 @@ class _AttendancePageState extends State<AttendancePage> {
               onChanged: (newTimeFormat) {
                 setState(() {
                   timeFormat = newTimeFormat;
+                  saveTimeFormat(newTimeFormat);
                 });
               },
             ),
