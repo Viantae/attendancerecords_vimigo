@@ -52,15 +52,15 @@ class RecordProvider extends ChangeNotifier {
   }
 }
 
-class PeopleRepository { //stores the list in memory and saves it
+class RecordRepository { //stores the list in memory and saves it
   static const _key = 'record_key';
-  Future<void> savePeople(List<Records> record) async {
+  Future<void> saveRecords(List<Records> record) async {
     final prefs = await SharedPreferences.getInstance();
     final recordJson = record.map((Records) => json.encode(Records.toJson())).toList();
     await prefs.setStringList(_key, recordJson);
   }
 
-  Future<List<Records>> loadPeople() async {
+  Future<List<Records>> loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
     final recordJson = prefs.getStringList(_key);
 

@@ -1,4 +1,3 @@
-
 String time_passed(DateTime datetime, {bool full = true}) {
     DateTime now = DateTime.now();
     DateTime ago = datetime;

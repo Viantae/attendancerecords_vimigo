@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'content.dart';
+import 'addrecordpage.dart';
 import 'records.dart';
+import 'search.dart';
 
-class AttHead extends StatefulWidget {
-  AttHead({Key? key}) : super(key: key);
+class AttendancePage extends StatefulWidget {
+  AttendancePage({Key? key}) : super(key: key);
 
   @override
-  _AttHeadState createState() => _AttHeadState();
+  _AttendancePageState createState() => _AttendancePageState();
 }
 
-class _AttHeadState extends State<AttHead> {
+class _AttendancePageState extends State<AttendancePage> {
   // A variable to hold the loaded people
   List<Records> loadedRecords = [];
 
@@ -41,17 +43,27 @@ class _AttHeadState extends State<AttHead> {
             IconButton(
               icon: Transform.scale(scale: 1.22, child: Icon(Icons.search)),
               onPressed: () {
-                /* SEARCH FOR Records ID
                 showSearch(
                   context: context,
-                  delegate: SearchPeople(loadedRecords),
+                  delegate: Searchbar(loadedRecords),
                 );
-                */
               },
             )
           ],
         ),
-        //floating icon here
+        floatingActionButton: customfloatingButton( 
+          label: '',
+          iconData: Icons.add,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddRecordPage()),
+            ).then((_) {
+              // This code runs after returning from AddPeoplePage
+              updateState(); // Refresh List
+            });
+          },
+        ),
         body: ListView.builder(
           itemCount: loadedRecords.length,
           itemBuilder: (context, index){
@@ -66,8 +78,7 @@ class _AttHeadState extends State<AttHead> {
                 ),
               ),
               Text('Date: ${loadedRecords[index].date}'),
-              Text('Present: ${loadedRecords[index].isPresent}'),
-              Text('Checked in: ${loadedRecords[index].checkinTime}'),
+              Text('Percentage: ${loadedRecords[index].checkinTime}'), // change this to calculation of total people attended
               Text('ID Number: ${loadedRecords[index].id}'),
               IconButton(
                 icon: Icon(Icons.arrow_forward_sharp),
