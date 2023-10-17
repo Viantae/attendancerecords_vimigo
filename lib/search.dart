@@ -1,10 +1,12 @@
 import 'content.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'people.dart';
 import 'records.dart';
 
 class Searchbar extends SearchDelegate<String> {
   final List items;
+  
 
   Searchbar(this.items);
 
@@ -61,6 +63,7 @@ class Searchbar extends SearchDelegate<String> {
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
+        
         if (results[index] is Person) {
           final person = results[index] as Person;
           List<Widget> contentWidgets = [
@@ -83,6 +86,9 @@ class Searchbar extends SearchDelegate<String> {
         } else if (results[index] is Records) {
           final record = results[index] as Records;
           {
+            int totalPeople = Provider.of<PeopleProvider>(context).peopleList.length;
+            double attendancePercentage = (results[index].personID.length / totalPeople) * 100;
+
             // Create a list of content widgets for each Records
             List<Widget> contentWidgets = [
               const CircleAvatar(
@@ -93,10 +99,10 @@ class Searchbar extends SearchDelegate<String> {
                   Icons.receipt,
                 ),
               ),
-              Text('Date: ${record.date}'),
-              Text('Present: ${record.isPresent}'),
-              Text('Checked in: ${record.checkinTime}'),
-              Text('ID Number: ${record.id}'),
+              Text('Attendance ID Number: ${record.id}'),
+              Text('Date Created: ${record.date}'),
+              Text('Attendance Percentage: $attendancePercentage'),
+              
               IconButton(
                 icon: Icon(Icons.arrow_forward_sharp),
                 onPressed: () {

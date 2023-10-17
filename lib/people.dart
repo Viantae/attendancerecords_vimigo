@@ -39,12 +39,19 @@ class PeopleProvider extends ChangeNotifier {
   List<Person> get peopleList => _people; //returns the list of people
   void addPerson(Person person) {
     _people.add(person);
+    savePeople();
     notifyListeners();
   }
 
   void removePerson(Person person) {
     _people.remove(person);
+    savePeople();
     notifyListeners();
+  }
+
+  void savePeople() {
+    final peopleRepository = PeopleRepository();
+    peopleRepository.savePeople(_people);
   }
 }
 

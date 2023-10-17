@@ -4,6 +4,7 @@ import 'content.dart';
 import 'addrecordpage.dart';
 import 'records.dart';
 import 'search.dart';
+import 'people.dart';
 
 class AttendancePage extends StatefulWidget {
   AttendancePage({Key? key}) : super(key: key);
@@ -65,8 +66,12 @@ class _AttendancePageState extends State<AttendancePage> {
           },
         ),
         body: ListView.builder(
+
           itemCount: loadedRecords.length,
           itemBuilder: (context, index){
+            int totalPeople = Provider.of<PeopleProvider>(context).peopleList.length;
+            double attendancePercentage = (loadedRecords[index].personID.length / totalPeople) * 100;
+
             // Create a list of content widgets for each Records
             List<Widget> contentWidgets = [
               const CircleAvatar(
@@ -77,9 +82,9 @@ class _AttendancePageState extends State<AttendancePage> {
                   Icons.receipt,
                 ),
               ),
-              Text('Date: ${loadedRecords[index].date}'),
-              Text('Percentage: ${loadedRecords[index].checkinTime}'), // change this to calculation of total people attended
-              Text('ID Number: ${loadedRecords[index].id}'),
+              Text('Attendance ID Number: ${loadedRecords[index].id}'),
+              Text('Date Created: ${loadedRecords[index].date}'),
+              Text('Overall Attendance: $attendancePercentage'), // change this to calculation of total people attended
               IconButton(
                 icon: Icon(Icons.arrow_forward_sharp),
                 onPressed: () {

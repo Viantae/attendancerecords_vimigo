@@ -45,11 +45,13 @@ class ARP_State extends State<ARP_Body> {
   final PeopleProvider peopleProvider;
 
   ARP_State({required this.recordProvider, required this.peopleProvider});
-  TextEditingController idInput = TextEditingController();
-  TextEditingController datecreatedInput = TextEditingController();
-  List<TextEditingController> checkinTimeInput = [];
-  List<String> selectedNames = [];
-  bool shouldRefresh = false;
+  TextEditingController recordIDInput = TextEditingController(); // controller to store record ID
+  TextEditingController datecreatedInput = TextEditingController();  // controller to store date created
+  List<TextEditingController> checkinTimeInput = []; // List to store the employee checkintime of each person
+  List<String> checkinTime = []; // List to store the checkintime of each person
+  List<String> selectedNames = [];  // List to store selected persons names
+  List<String> selectedPersonIDs = []; // List to store selected person IDs
+  bool shouldRefresh = false; // for refreshing the page if true
 
 
   // GlobalKey to refresh the page
@@ -62,10 +64,8 @@ class ARP_State extends State<ARP_Body> {
     checkinTimeInput = List.generate(peopleProvider.peopleList.length, (index) => TextEditingController());
     selectedNames = List.generate(peopleProvider.peopleList.length, (index) => "");
   }
-
-  // Shows the list of names
     // Shows the list of names
-  void _showNameSelectionDialog() async {
+  void showNameSelectionDialog() async {
     final selectedPeople = await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -77,13 +77,47 @@ class ARP_State extends State<ARP_Body> {
       for (int i = 0; i < selectedPeople.length; i++) {
         // Assign the selected names to the corresponding controllers
         selectedNames[i] = selectedPeople[i];
+        // Find the corresponding person ID and add it to the list
+      final selectedPerson = peopleProvider.peopleList.firstWhere(
+          (person) => person.name == selectedNames[i],
+          orElse: () => Person(name: '', id: '', phone: ''), // Handle the case when no matching person is found
+        );
+        selectedPersonIDs.add(selectedPerson.id);
       }
 
+      
       // Set the flag to trigger a refresh
       setState(() {
         shouldRefresh = true;
       });
     }
+  }
+
+  void saveRecord() async {
+    //convert texteditingcontroller to List<String>
+    for (int i = 0; i < checkinTimeInput.length; i++) {
+      checkinTime.add(checkinTimeInput[i].text);
+    }
+
+    // Create a Records object with the data from input fields
+    final newRecord = Records(
+      id: recordIDInput.text,
+      personID: selectedPersonIDs, 
+      checkinTime: checkinTime, // Join the checkin times into a single string
+      date: datecreatedInput.text,
+    );
+
+    // Add the new record to provider
+    recordProvider.addRecords(newRecord);
+
+    recordIDInput.clear();
+    datecreatedInput.clear();
+    for (final controller in checkinTimeInput) {
+      controller.clear();
+    }
+
+    // Return to record page
+    Navigator.pop(context);
   }
 
   @override
@@ -93,16 +127,7 @@ class ARP_State extends State<ARP_Body> {
           label: 'Save',
           iconData: Icons.save,
           onPressed: () {
-            /*
-            final newRecord = Records(
-                  id: idInput.text,
-                  name: nameInput.text,
-                  phone: phoneInput.text,
-                );
-                
-            recordProvider.addRecords(newRecord);
-              */
-            Navigator.pop(context);
+            saveRecord();
           }),
       body: SingleChildScrollView(
         child: Padding(
@@ -111,21 +136,21 @@ class ARP_State extends State<ARP_Body> {
             children: [
               // ID input goes here
               TextField(
-                controller: idInput,
+                controller: recordIDInput,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.feed_outlined),
-                  labelText: "Attendance ID",
+                  labelText: "Input Attendance Record ID",
                 ),
               ),
 
             // Widget to pick the date record was created
               TimePicker(
               controller: datecreatedInput,
-              labelText: "Date Created",
+              labelText: "Input the Date Created for this Record",
             ),
 
             ElevatedButton(
-              onPressed: _showNameSelectionDialog,
+              onPressed: showNameSelectionDialog,
               child: Text("Select People Who Attended"),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 40), // Set a minimum height
@@ -140,7 +165,7 @@ class ARP_State extends State<ARP_Body> {
                     children: [
                       ListTile(
                         title: Text(
-                          selectedNames[i],
+                          "${selectedNames[i]}   id: ${selectedPersonIDs[i]}",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

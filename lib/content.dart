@@ -176,9 +176,6 @@ class _NavigateState extends State<Navigate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Attendence Records Demo'),
-      ),
       body: _pages[_currentIndex], // Display the currently selected page/screen
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

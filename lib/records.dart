@@ -4,14 +4,14 @@ import 'dart:convert';
 
 //Records attributes
 class Records {
-  String id, checkinTime, date, personID;
-  bool isPresent;
+  String id, date;
+  List<String> personID;
+  List<String> checkinTime;
 
   Records({
     required this.id,
     required this.checkinTime,
     required this.date,
-    required this.isPresent,
     required this.personID,
   });
 
@@ -19,10 +19,9 @@ class Records {
   factory Records.fromJson(Map<String, dynamic> json) {
     return Records(
       id: json['id'] as String,
-      personID: json['personID'] as String,
-      checkinTime: json['checkinTime'] as String,
+      personID: List<String>.from(json['personID']),
+      checkinTime: List<String>.from(json['checkinTime']),
       date: json['date'] as String,
-      isPresent: json['isPresent'] as bool,
     );
   }
 
@@ -33,7 +32,6 @@ class Records {
       'personID' : personID,
       'checkinTime': checkinTime,
       'date': date,
-      'isPresent': isPresent
     };
   }
 }
@@ -46,12 +44,19 @@ class RecordProvider extends ChangeNotifier {
   List<Records> get recordList => _record; //returns the list of attendance records
   void addRecords(Records Records) {
     _record.add(Records);
+    saveRecords();
     notifyListeners();
   }
 
   void removeRecords(Records Records) {
     _record.remove(Records);
+    saveRecords();
     notifyListeners();
+  }
+
+  void saveRecords() {
+    final peopleRepository = RecordRepository();
+    peopleRepository.saveRecords(_record);
   }
 }
 
