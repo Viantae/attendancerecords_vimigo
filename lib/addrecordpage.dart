@@ -20,7 +20,9 @@ class AddRecordPage extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 255, 119, 0),
         centerTitle: true,
       ),
-      body: ARP_Body(recordProvider: RecordProvider(loadedRecords), peopleProvider: PeopleProvider(loadedPeople)),
+      body: ARP_Body(
+          recordProvider: RecordProvider(loadedRecords),
+          peopleProvider: PeopleProvider(loadedPeople)),
     );
   }
 }
@@ -29,10 +31,13 @@ class ARP_Body extends StatefulWidget {
   final RecordProvider recordProvider;
   final PeopleProvider peopleProvider;
 
-  const ARP_Body({Key? key, required this.recordProvider, required this.peopleProvider}) : super(key: key);
+  const ARP_Body(
+      {Key? key, required this.recordProvider, required this.peopleProvider})
+      : super(key: key);
 
   @override
-  State<ARP_Body> createState() => ARP_State(recordProvider: recordProvider, peopleProvider: peopleProvider);
+  State<ARP_Body> createState() =>
+      ARP_State(recordProvider: recordProvider, peopleProvider: peopleProvider);
 }
 
 class ARP_State extends State<ARP_Body> {
@@ -41,8 +46,45 @@ class ARP_State extends State<ARP_Body> {
 
   ARP_State({required this.recordProvider, required this.peopleProvider});
   TextEditingController idInput = TextEditingController();
-  TextEditingController timeInput = TextEditingController();
-  TextEditingController phoneInput = TextEditingController();
+  TextEditingController datecreatedInput = TextEditingController();
+  List<TextEditingController> checkinTimeInput = [];
+  List<String> selectedNames = [];
+  bool shouldRefresh = false;
+
+
+  // GlobalKey to refresh the page
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the list of controllers and selected names
+    checkinTimeInput = List.generate(peopleProvider.peopleList.length, (index) => TextEditingController());
+    selectedNames = List.generate(peopleProvider.peopleList.length, (index) => "");
+  }
+
+  // Shows the list of names
+    // Shows the list of names
+  void _showNameSelectionDialog() async {
+    final selectedPeople = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NameSelectChecklist(peopleList: peopleProvider.peopleList);
+      },
+    );
+
+    if (selectedPeople != null) {
+      for (int i = 0; i < selectedPeople.length; i++) {
+        // Assign the selected names to the corresponding controllers
+        selectedNames[i] = selectedPeople[i];
+      }
+
+      // Set the flag to trigger a refresh
+      setState(() {
+        shouldRefresh = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,31 +102,72 @@ class ARP_State extends State<ARP_Body> {
                 
             recordProvider.addRecords(newRecord);
               */
-              Navigator.pop(context);
-            }
-      ),
+            Navigator.pop(context);
+          }),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              TextField( // ID input goes here
+              // ID input goes here
+              TextField(
                 controller: idInput,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.feed_outlined),
                   labelText: "Attendance ID",
                 ),
               ),
-              CheckListWidget(peopleList: peopleProvider.peopleList), // widget to check the people who attended
-              TimePicker( // Widget to pick the time 
-                controller: timeInput, 
-                labelText: "Enter Time", 
+
+            // Widget to pick the date record was created
+              TimePicker(
+              controller: datecreatedInput,
+              labelText: "Date Created",
+            ),
+
+            ElevatedButton(
+              onPressed: _showNameSelectionDialog,
+              child: Text("Select People Who Attended"),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 40), // Set a minimum height
               ),
-            ],
-          ),
+            ),
+            // Display selected names and put time
+            if (shouldRefresh) ...[
+              for (int i = 0; i < selectedNames.length; i++)
+                if (selectedNames[i].isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        title: Text(
+                          selectedNames[i],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete), // Add the delete icon
+                          onPressed: () {
+                            // Handle deletion here, for example, clear the controller
+                            checkinTimeInput[i].clear();
+                            setState(() {
+                              selectedNames[i] = ''; // Clear the selected name
+                            });
+                          },
+                        ),
+                      ),
+                      Text("Checked-in Time"),
+                      TimePicker(
+                        controller: checkinTimeInput[i], 
+                        labelText: "Select Check-in Time",
+                      ),
+                    ],
+                  ),
+            ]
+          ]),
         ),
       ),
     );
   }
 }
-

@@ -52,7 +52,7 @@ class _AttendancePageState extends State<AttendancePage> {
           ],
         ),
         floatingActionButton: customfloatingButton( 
-          label: '',
+          label: 'Record',
           iconData: Icons.add,
           onPressed: () {
             Navigator.push(

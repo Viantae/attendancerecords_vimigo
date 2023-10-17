@@ -4,7 +4,7 @@ import 'dart:convert';
 
 //Records attributes
 class Records {
-  String id, checkinTime, date;
+  String id, checkinTime, date, personID;
   bool isPresent;
 
   Records({
@@ -12,12 +12,14 @@ class Records {
     required this.checkinTime,
     required this.date,
     required this.isPresent,
+    required this.personID,
   });
 
   // Add a factory constructor to create a Records from JSON
   factory Records.fromJson(Map<String, dynamic> json) {
     return Records(
       id: json['id'] as String,
+      personID: json['personID'] as String,
       checkinTime: json['checkinTime'] as String,
       date: json['date'] as String,
       isPresent: json['isPresent'] as bool,
@@ -28,6 +30,7 @@ class Records {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'personID' : personID,
       'checkinTime': checkinTime,
       'date': date,
       'isPresent': isPresent

@@ -89,50 +89,76 @@ class customfloatingButton extends StatelessWidget {
 }
 
 // checkbox list
-class CheckListWidget extends StatefulWidget {
+class NameSelectChecklist extends StatefulWidget {
   final List<Person> peopleList;
 
-  CheckListWidget({required this.peopleList});
+  NameSelectChecklist({required this.peopleList});
 
   @override
-  _CheckListWidgetState createState() => _CheckListWidgetState();
+  _NameSelectChecklistState createState() => _NameSelectChecklistState();
 }
 
-class _CheckListWidgetState extends State<CheckListWidget> {
-  // Maintain a list of selected people
-  List<bool> selectedPeople = [];
+class _NameSelectChecklistState extends State<NameSelectChecklist> {
+  List<bool> selectedNames = [];
 
   @override
   void initState() {
     super.initState();
-    // Initialize the selectedPeople list with false values for each person
-    selectedPeople = List<bool>.generate(widget.peopleList.length, (index) => false);
+    // Initialize the selectedNames list with false values for each name
+    selectedNames = List<bool>.generate(widget.peopleList.length, (index) => false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.peopleList.length,
-      itemBuilder: (context, index) {
-        final person = widget.peopleList[index];
-        return ListTile(
-          title: Text(person.name), // Display names
-          leading: Checkbox(
-            value: selectedPeople[index], // Get the checkbox state from the list
-            onChanged: (value) {
-              setState(() {
-                // Update the checkbox state when changed
-                selectedPeople[index] = value!;
-              });
-            },
-          ),
-        );
-      },
+    return AlertDialog(
+      title: Text('Select Names'),
+      content: Container(
+        width: double.maxFinite,
+        height: 300, // Set a fixed height 
+        child: ListView.builder(
+          itemCount: widget.peopleList.length,
+          itemBuilder: (context, index) {
+            final person = widget.peopleList[index];
+            return ListTile(
+              title: Text(person.name),
+              leading: Checkbox(
+                value: selectedNames[index],
+                onChanged: (value) {
+                  setState(() {
+                    selectedNames[index] = value!;
+                  });
+                },
+              ),
+            );
+          },
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            // Perform actions when "OK" is selected
+            List<String> selected = [];
+            for (int i = 0; i < selectedNames.length; i++) {
+              if (selectedNames[i]) {
+                selected.add(widget.peopleList[i].name);
+              }
+            }
+            Navigator.of(context).pop(selected);
+          },
+          child: Text('OK'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Cancel'),
+        ),
+      ],
     );
   }
 }
 
-// Bottom Navigation bar (customise if have time)
+// Bottom Navigation bar 
 class Navigate extends StatefulWidget {
   @override
   _NavigateState createState() => _NavigateState();
@@ -164,11 +190,11 @@ class _NavigateState extends State<Navigate> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'People',
+            label: 'Add Records',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_chart_sharp),
-            label: 'Records',
+            icon: Icon(Icons.note_add_rounded),
+            label: 'Manage People',
           ),
         ],
       ),

@@ -37,7 +37,7 @@
       return MaterialApp(
         home: Scaffold(
           appBar: AppBar(
-            title: Text('Attendance Record Demo'),
+            title: Text('Attendance Records Demo'),
             backgroundColor: const Color.fromARGB(255, 255, 119, 0),
             centerTitle: true,
             actions: <Widget>[

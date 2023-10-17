@@ -15,7 +15,7 @@ class AddPeoplePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Attendance Record Demo'),
+        title: Text('Attendance Records Demo'),
         backgroundColor: const Color.fromARGB(255, 255, 119, 0),
         centerTitle: true,
       ),
@@ -53,8 +53,6 @@ class AddPeopleBodyState extends State<AddPeopleBody> {
       });
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +111,7 @@ class AddPeopleBodyState extends State<AddPeopleBody> {
                 ),
                 keyboardType: TextInputType.number, // Allow only numbers
               ),
-            ],
+            ]
           ),
         ),
       ),
