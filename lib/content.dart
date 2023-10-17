@@ -258,3 +258,46 @@ class _TimePickerState extends State<TimePicker> {
     );
   }
 }
+
+class TimeFormatDropdown extends StatelessWidget {
+  final bool timeFormat;
+  final Function(bool) onChanged;
+
+  TimeFormatDropdown({required this.timeFormat, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      decoration: const BoxDecoration(
+        color: const Color(0xff5b7c99), // Choose your desired background color
+        borderRadius: BorderRadius.vertical(),
+      ),
+      child: Row(
+        children: <Widget>[
+          const Icon(
+            Icons.access_time, // Your icon here
+            color: const Color(0xffcfe8ef), // Icon color
+          ),
+          SizedBox(width: 5.0),
+          DropdownButton<String>(
+            value: timeFormat ? 'Detailed' : 'Simplified',
+            onChanged: (newValue) {
+              onChanged(newValue == 'Detailed');
+            },
+            items: <String>['Simplified', 'Detailed']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  value,
+                  style: TextStyle(color: Color.fromARGB(255, 33, 229, 212), fontWeight: FontWeight.bold), // Text color
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}

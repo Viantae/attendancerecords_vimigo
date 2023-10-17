@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String time_passed(DateTime datetime, {bool full = true}) {
     DateTime now = DateTime.now();
     DateTime ago = datetime;
@@ -52,7 +54,8 @@ String time_passed(DateTime datetime, {bool full = true}) {
 
     //display full time description if true
     if(full){
-      return str.isNotEmpty?"${tlist.join(", ")} ago":"Just Now";
+      String formattedTime = DateFormat("dd MMM yyyy, h:mm a").format(datetime);
+      return formattedTime;
     }else{
       return str.isNotEmpty?"${tlist[0]} ago":"Just Now";
     }

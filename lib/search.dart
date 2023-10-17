@@ -90,6 +90,7 @@ class Searchbar extends SearchDelegate<String> {
             double attendancePercentage = (results[index].personID.length / totalPeople) * 100;
 
             // Create a list of content widgets for each Records
+            
             List<Widget> contentWidgets = [
               const CircleAvatar(
                 // backgroundImage: AssetImage('your_image_path'),
@@ -111,6 +112,7 @@ class Searchbar extends SearchDelegate<String> {
               ),
             ];
             return ContentPage(contentWidgets);
+            
           }
         }
         else{

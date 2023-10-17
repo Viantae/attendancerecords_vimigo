@@ -5,6 +5,7 @@ import 'addrecordpage.dart';
 import 'records.dart';
 import 'search.dart';
 import 'people.dart';
+import 'timepassed.dart';
 
 class AttendancePage extends StatefulWidget {
   AttendancePage({Key? key}) : super(key: key);
@@ -16,6 +17,9 @@ class AttendancePage extends StatefulWidget {
 class _AttendancePageState extends State<AttendancePage> {
   // A variable to hold the loaded people
   List<Records> loadedRecords = [];
+
+  bool timeFormat = true; // Add a flag to track the time format
+
 
   void updateState() {
   setState(() {});
@@ -65,36 +69,52 @@ class _AttendancePageState extends State<AttendancePage> {
             });
           },
         ),
-        body: ListView.builder(
+        body: Column(
+          children: <Widget>[
+            TimeFormatDropdown(
+              // Use the custom dropdown button
+              timeFormat: timeFormat,
+              onChanged: (newTimeFormat) {
+                setState(() {
+                  timeFormat = newTimeFormat;
+                });
+              },
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: loadedRecords.length,
+                itemBuilder: (context, index) {
+                  int totalPeople =
+                      Provider.of<PeopleProvider>(context).peopleList.length;
+                  double attendancePercentage = (loadedRecords[index].personID.length / totalPeople) * 100;
 
-          itemCount: loadedRecords.length,
-          itemBuilder: (context, index){
-            int totalPeople = Provider.of<PeopleProvider>(context).peopleList.length;
-            double attendancePercentage = (loadedRecords[index].personID.length / totalPeople) * 100;
+                  String timeDifference = timeFormat
+                      ? time_passed(DateTime.parse(loadedRecords[index].date))
+                      : time_passed(DateTime.parse(loadedRecords[index].date), full: false);
 
-            // Create a list of content widgets for each Records
-            List<Widget> contentWidgets = [
-              const CircleAvatar(
-                // backgroundImage: AssetImage('your_image_path'),
-                backgroundColor: const Color(0xff764abc),
-                radius: 30.0,
-                child: Icon(
-                  Icons.receipt,
-                ),
-              ),
-              Text('Attendance ID Number: ${loadedRecords[index].id}'),
-              Text('Date Created: ${loadedRecords[index].date}'),
-              Text('Overall Attendance: $attendancePercentage'), // change this to calculation of total people attended
-              IconButton(
-                icon: Icon(Icons.arrow_forward_sharp),
-                onPressed: () {
-                  // Handle the button click
+                  List<Widget> contentWidgets = [
+                    const CircleAvatar(
+                      backgroundColor: const Color(0xff764abc),
+                      radius: 30.0,
+                      child: Icon(
+                        Icons.receipt,
+                      ),
+                    ),
+                    Text('Record ID: ${loadedRecords[index].id}'),
+                    Text('Date Created: $timeDifference'),
+                    Text('Overall Attendance: $attendancePercentage'),
+                    IconButton(
+                      icon: Icon(Icons.arrow_forward_sharp),
+                      onPressed: () {
+                        // Handle the button click
+                      },
+                    ),
+                  ];
+                  return ContentPage(contentWidgets);
                 },
               ),
-            ];
-            // Pass the contentWidgets to ContentPage
-            return ContentPage(contentWidgets);
-          },
+            ),
+          ],
         ),
       ),
     );
